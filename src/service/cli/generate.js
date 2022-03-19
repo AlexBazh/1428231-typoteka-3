@@ -5,7 +5,8 @@ const {
   shuffle
 } = require(`../../utils`);
 
-const fs = require(`fs`);
+const fs = require(`fs`).promises;
+const chalk = require(`chalk`);
 
 const DEFAULT_COUNT = 1;
 const FILE_NAME = `mocks.json`;
@@ -74,16 +75,15 @@ const generatePosts = (count) => (
 
 module.exports = {
   name: `--generate`,
-  run(args) {
+  async run(args) {
     const [count] = args;
     const countPosts = Number.parseInt(count, 10) || DEFAULT_COUNT;
     const content = JSON.stringify(generatePosts(countPosts));
-    fs.writeFile(FILE_NAME, content, (err) => {
-      if (err) {
-        return console.error(`Can't write to the file.`);
-      } else {
-        return console.info(`Successfully wrote to the file.`);
-      }
-    });
+    try {
+      await fs.writeFile(FILE_NAME, content);
+      console.info(chalk.green(`Successfully wrote to the file.`));
+    } catch (error) {
+      console.error(chalk.red(`Can't write to the file...`));
+    }
   }
 };
