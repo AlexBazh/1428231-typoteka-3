@@ -5,6 +5,8 @@ const {
   shuffle
 } = require(`../../utils`);
 
+const {ExitCode} = require(`../../constants`);
+
 const fs = require(`fs`).promises;
 const chalk = require(`chalk`);
 
@@ -45,12 +47,17 @@ module.exports = {
 
     const [count] = args;
     const countPosts = Number.parseInt(count, 10) || DEFAULT_COUNT;
+    if (countPosts > 1000) {
+      console.error(chalk.red(`Post cannot be more than 1000`));
+      process.exit(ExitCode.error);
+    }
     const content = JSON.stringify(generatePosts(countPosts, titles, сategory, sentences));
     try {
       await fs.writeFile(FILE_NAME, content);
       console.info(chalk.green(`Successfully wrote to the file.`));
     } catch (error) {
       console.error(chalk.red(`Can't write to the file...`));
+      process.exit(ExitCode.error);
     }
   }
 };
