@@ -3,7 +3,7 @@
 const http = require(`http`);
 const fs = require(`fs`).promises;
 const chalk = require(`chalk`);
-const { HttpCode } = require(`../../constants`);
+const {HttpCode} = require(`../../constants`);
 
 const DEFAULT_PORT = 3000;
 const FILENAME = `mocks.json`;
@@ -20,7 +20,7 @@ const sendResponse = (res, statusCode, message) => {
   res.writeHead(statusCode, {
     'Content-Type': `text/html; charset=UTF-8`,
   });
-  res.end(template)
+  res.end(template);
 };
 
 const onClientConnect = async (req, res) => {
@@ -32,12 +32,11 @@ const onClientConnect = async (req, res) => {
         const FileContent = await fs.readFile(FILENAME);
         const mocks = JSON.parse(FileContent);
         const message = mocks.map((post) => `<li>${post.title}</li>`).join(` `);
-        sendResponse(res, HttpCode.OK, `<ul>${message}</ul>`)
+        sendResponse(res, HttpCode.OK, `<ul>${message}</ul>`);
       } catch (error) {
         sendResponse(res, HttpCode.NOT_FOUND, notFoundMessage);
       }
       break;
-  
     default:
       sendResponse(res, HttpCode.NOT_FOUND, notFoundMessage);
       break;
@@ -52,11 +51,11 @@ module.exports = {
 
     http.createServer(onClientConnect)
       .listen(port)
-      .on(`listening`, (err) => {
+      .on(`listening`, () => {
         console.info(chalk.green(`Starting server on ${port}`));
       })
       .on(`error`, ({message}) => {
         console.error(chalk.red(`Connection error: ${message}`));
-      })
-  },
+      });
+  }
 };

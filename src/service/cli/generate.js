@@ -22,7 +22,6 @@ const readContent = async (filePath) => {
     return content.trim().split(`\n`);
   } catch (error) {
     console.error(chalk.red(`Can't read the file on ${filePath}`));
-    return [];
   }
 };
 
@@ -39,14 +38,13 @@ const generatePosts = (count, titles, categories, sentences) => (
 module.exports = {
   name: `--generate`,
   async run(args) {
-    const titles = await readContent(FILE_TITLES_PATH);
-    const сategory = await readContent(FILE_CATEGORIES_PATH);
-    const sentences = await readContent(FILE_SENTENCES_PATH);
-
     const [count] = args;
     const countPosts = Number.parseInt(count, 10) || DEFAULT_COUNT;
-    const content = JSON.stringify(generatePosts(countPosts, titles, сategory, sentences));
     try {
+      const titles = await readContent(FILE_TITLES_PATH);
+      const сategory = await readContent(FILE_CATEGORIES_PATH);
+      const sentences = await readContent(FILE_SENTENCES_PATH);
+      const content = await JSON.stringify(generatePosts(countPosts, titles, сategory, sentences));
       await fs.writeFile(FILE_NAME, content);
       console.info(chalk.green(`Successfully wrote to the file.`));
     } catch (error) {
